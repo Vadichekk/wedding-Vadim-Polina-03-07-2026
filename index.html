@@ -778,172 +778,182 @@
     </div>
 
     <script>
-        // ТАЙМЕР
-        const weddingDate = new Date(2026, 6, 3, 16, 0);
+    // ТАЙМЕР
+    const weddingDate = new Date(2026, 6, 3, 16, 0);
 
-        function updateTimer() {
-            const now = new Date();
-            const diff = weddingDate - now;
-            if (diff <= 0) {
-                document.getElementById('days').innerText = '00';
-                document.getElementById('hours').innerText = '00';
-                document.getElementById('minutes').innerText = '00';
-                document.getElementById('seconds').innerText = '00';
-                return;
-            }
-            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+    function updateTimer() {
+        const now = new Date();
+        const diff = weddingDate - now;
+        if (diff <= 0) {
+            document.getElementById('days').innerText = '00';
+            document.getElementById('hours').innerText = '00';
+            document.getElementById('minutes').innerText = '00';
+            document.getElementById('seconds').innerText = '00';
+            return;
         }
-        updateTimer();
-        setInterval(updateTimer, 1000);
+        document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+    }
+    updateTimer();
+    setInterval(updateTimer, 1000);
 
-        // АНИМАЦИЯ КОНВЕРТА И МУЗЫКА
-        const envelope = document.getElementById('envelope');
-        const envelopeOverlay = document.getElementById('envelopeOverlay');
-        const mainContent = document.getElementById('mainContent');
-        const audio = document.getElementById('bgMusic');
-        const playBtn = document.getElementById('playPauseBtn');
-        const musicStatus = document.getElementById('musicStatus');
-        let isPlaying = false;
+    // АНИМАЦИЯ КОНВЕРТА И МУЗЫКА (ТОЛЬКО ПЕРВЫЙ РАЗ)
+    const envelope = document.getElementById('envelope');
+    const envelopeOverlay = document.getElementById('envelopeOverlay');
+    const mainContent = document.getElementById('mainContent');
+    const audio = document.getElementById('bgMusic');
+    const playBtn = document.getElementById('playPauseBtn');
+    const musicStatus = document.getElementById('musicStatus');
+    let isPlaying = false;
+    let musicStarted = false; // Флаг, что музыка уже была запущена
 
-        envelope.addEventListener('click', function() {
-            envelope.classList.add('opening');
-            setTimeout(() => {
-                envelopeOverlay.classList.add('hidden');
-                mainContent.classList.add('visible');
+    // Клик по конверту - первый запуск
+    envelope.addEventListener('click', function() {
+        envelope.classList.add('opening');
+        setTimeout(() => {
+            envelopeOverlay.classList.add('hidden');
+            mainContent.classList.add('visible');
+            // Запускаем музыку ТОЛЬКО если она ещё не играла
+            if (!musicStarted) {
                 audio.play().then(() => {
                     isPlaying = true;
-                    musicStatus.textContent = 'Сейчас играет';
-                    playBtn.classList.add('playing');
-                }).catch(() => {});
-            }, 1000);
-        });
-
-        playBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                musicStatus.textContent = 'Музыка выключена';
-                playBtn.classList.remove('playing');
-            } else {
-                audio.play().then(() => {
-                    isPlaying = true;
+                    musicStarted = true;
                     musicStatus.textContent = 'Сейчас играет';
                     playBtn.classList.add('playing');
                 }).catch(() => {});
             }
+        }, 1000);
+    });
+
+    // Управление ТОЛЬКО через кнопку плеера
+    playBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Останавливаем всплытие события
+        
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            musicStatus.textContent = 'Музыка выключена';
+            playBtn.classList.remove('playing');
+        } else {
+            audio.play().then(() => {
+                isPlaying = true;
+                musicStarted = true;
+                musicStatus.textContent = 'Сейчас играет';
+                playBtn.classList.add('playing');
+            }).catch(() => {});
+        }
+    });
+
+    // АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
         });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.2 });
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    // ДОБАВЛЕНИЕ ГОСТЕЙ
+    let guestCount = 1;
+    document.getElementById('addGuestBtn').addEventListener('click', function() {
+        guestCount++;
+        const newGuest = document.createElement('div');
+        newGuest.className = 'guest-card';
+        newGuest.innerHTML = `
+            <div class="guest-title">
+                <span>👤 Гость ${guestCount}</span>
+                <button type="button" class="remove-guest" onclick="this.closest('.guest-card').remove()">✕</button>
+            </div>
+            <div class="form-group">
+                <label>ФИО</label>
+                <input type="text" class="guest-name" placeholder="Например: Полина Храмцова">
+            </div>
+            <div class="form-group">
+                <label>🍽 Предпочтение по горячему</label>
+                <select class="guest-meal">
+                    <option>🍗 Курица</option>
+                    <option>🥩 Свинина</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>🥂 Что предпочитаете из алкоголя?</label>
+                <select class="guest-alcohol">
+                    <option>🍷 Красное вино</option>
+                    <option>🥂 Белое вино</option>
+                    <option>🍾 Шампанское</option>
+                    <option>🥃 Водка</option>
+                    <option>🥃 Виски</option>
+                    <option>🥃 Коньяк</option>
+                    <option>🚫 Не пью алкоголь</option>
+                </select>
+            </div>
+        `;
+        document.getElementById('guests-container').appendChild(newGuest);
+    });
 
-        // ДОБАВЛЕНИЕ ГОСТЕЙ
-        let guestCount = 1;
-        document.getElementById('addGuestBtn').addEventListener('click', function() {
-            guestCount++;
-            const newGuest = document.createElement('div');
-            newGuest.className = 'guest-card';
-            newGuest.innerHTML = `
-                <div class="guest-title">
-                    <span>👤 Гость ${guestCount}</span>
-                    <button type="button" class="remove-guest" onclick="this.closest('.guest-card').remove()">✕</button>
-                </div>
-                <div class="form-group">
-                    <label>ФИО</label>
-                    <input type="text" class="guest-name" placeholder="Например: Полина Храмцова">
-                </div>
-                <div class="form-group">
-                    <label>🍽 Предпочтение по горячему</label>
-                    <select class="guest-meal">
-                        <option>🍗 Курица</option>
-                        <option>🥩 Свинина</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>🥂 Что предпочитаете из алкоголя?</label>
-                    <select class="guest-alcohol">
-                        <option>🍷 Красное вино</option>
-                        <option>🥂 Белое вино</option>
-                        <option>🍾 Шампанское</option>
-                        <option>🥃 Водка</option>
-                        <option>🥃 Виски</option>
-                        <option>🥃 Коньяк</option>
-                        <option>🚫 Не пью алкоголь</option>
-                    </select>
-                </div>
-            `;
-            document.getElementById('guests-container').appendChild(newGuest);
-        });
+    // ОТПРАВКА В ГУГЛ-ТАБЛИЦУ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxICUZfMUl5ESGSnZZobEtWEoAsS7oaeiqYUhz6pPs2bqmord7jyCU2CK91EyPKpKI0tw/exec';
 
-        // ОТПРАВКА В ГУГЛ-ТАБЛИЦУ - ИСПРАВЛЕНО!
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxICUZfMUl5ESGSnZZobEtWEoAsS7oaeiqYUhz6pPs2bqmord7jyCU2CK91EyPKpKI0tw/exec';
+    document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const statusEl = document.getElementById('formStatus');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        const guestCards = document.querySelectorAll('.guest-card');
+        const guests = [];
+        let hasError = false;
 
-        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusEl = document.getElementById('formStatus');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            const guestCards = document.querySelectorAll('.guest-card');
-            const guests = [];
-            let hasError = false;
-
-            guestCards.forEach((card, index) => {
-                const name = card.querySelector('.guest-name').value.trim();
-                if (index === 0 && !name) {
-                    hasError = true;
-                    return;
-                }
-                if (name) {
-                    const meal = card.querySelector('.guest-meal').value;
-                    const alcohol = card.querySelector('.guest-alcohol').value;
-                    guests.push(`${name} (${meal}/${alcohol})`);
-                }
-            });
-
-            if (hasError) {
-                statusEl.style.color = 'red';
-                statusEl.innerText = 'Введите имя первого гостя';
+        guestCards.forEach((card, index) => {
+            const name = card.querySelector('.guest-name').value.trim();
+            if (index === 0 && !name) {
+                hasError = true;
                 return;
             }
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Отправка...';
-            statusEl.innerText = 'Отправляем...';
-
-            try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        guests: guests.join('; ')
-                    })
-                });
-
-                statusEl.innerText = '✓ Спасибо! Ответ записан.';
-                document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
-                document.querySelector('#guest-1 .guest-name').value = '';
-                guestCount = 1;
-            } catch (error) {
-                statusEl.style.color = 'red';
-                statusEl.innerText = 'Ошибка. Попробуйте позже.';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Отправить подтверждение';
-                setTimeout(() => statusEl.innerText = '', 5000);
+            if (name) {
+                const meal = card.querySelector('.guest-meal').value;
+                const alcohol = card.querySelector('.guest-alcohol').value;
+                guests.push(`${name} (${meal}/${alcohol})`);
             }
         });
-    </script>
+
+        if (hasError) {
+            statusEl.style.color = 'red';
+            statusEl.innerText = 'Введите имя первого гостя';
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Отправка...';
+        statusEl.innerText = 'Отправляем...';
+
+        try {
+            await fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    guests: guests.join('; ')
+                })
+            });
+
+            statusEl.innerText = '✓ Спасибо! Ответ записан.';
+            document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
+            document.querySelector('#guest-1 .guest-name').value = '';
+            guestCount = 1;
+        } catch (error) {
+            statusEl.style.color = 'red';
+            statusEl.innerText = 'Ошибка. Попробуйте позже.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Отправить подтверждение';
+            setTimeout(() => statusEl.innerText = '', 5000);
+        }
+    });
+</script>
 </body>
 </html>
+
 
