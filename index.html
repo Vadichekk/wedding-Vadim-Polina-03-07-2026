@@ -54,7 +54,7 @@
             align-items: center;
             z-index: 10000;
             transition: opacity 1.5s ease, backdrop-filter 1.5s ease;
-            pointer-events: none; /* Чтобы контент под ним не кликался */
+            pointer-events: none;
         }
 
         .envelope-overlay.hidden {
@@ -73,7 +73,7 @@
             cursor: pointer;
             animation: float 3s ease-in-out infinite;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto; /* Чтобы на конверт можно было кликнуть */
+            pointer-events: auto;
         }
 
         .envelope.opening {
@@ -152,7 +152,7 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* Затемнение фона при открытии */
+        /* Основной контент */
         .content {
             opacity: 0;
             transition: opacity 1s ease;
@@ -162,7 +162,6 @@
             opacity: 1;
         }
 
-        /* Анимация появления блоков */
         .fade-up {
             opacity: 0;
             transform: translateY(40px);
@@ -235,7 +234,6 @@
             letter-spacing: 2px;
         }
 
-        /* Заголовки секций */
         .section-title {
             text-align: center;
             font-size: 2.8rem;
@@ -342,10 +340,6 @@
             transition: all 0.3s;
         }
 
-        .guest-card:last-child {
-            margin-bottom: 0;
-        }
-
         .guest-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -375,10 +369,6 @@
             margin-bottom: 20px;
         }
 
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
         label {
             display: block;
             margin-bottom: 8px;
@@ -387,7 +377,7 @@
             font-size: 1rem;
         }
 
-        input, select, textarea {
+        input, select {
             width: 100%;
             padding: 12px 18px;
             border: 2px solid #f0e4dc;
@@ -398,35 +388,10 @@
             transition: 0.2s;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus, select:focus {
             border-color: #b58b70;
             outline: none;
             box-shadow: 0 0 0 3px rgba(181, 139, 112, 0.1);
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .radio-group label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 400;
-            margin-bottom: 0;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 400px) {
-            .radio-group {
-                gap: 15px;
-            }
-            .radio-group label {
-                font-size: 0.9rem;
-            }
         }
 
         .btn {
@@ -440,6 +405,7 @@
             font-weight: 600;
             transition: 0.3s;
             width: 100%;
+            margin-top: 20px;
         }
 
         .btn:hover {
@@ -450,7 +416,7 @@
         .btn-secondary {
             background: #e1d3cb;
             color: #4a3a32;
-            margin-top: 20px;
+            margin-top: 0;
         }
 
         .btn-secondary:hover {
@@ -616,7 +582,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* Адаптация */
         @media (max-width: 600px) {
             .container { padding: 30px 15px; }
             .section-title { font-size: 2.2rem; }
@@ -638,7 +603,7 @@
     </style>
 </head>
 <body>
-    <!-- КОНВЕРТ (ПОЛНОЭКРАННЫЙ) -->
+    <!-- КОНВЕРТ -->
     <div class="envelope-overlay" id="envelopeOverlay">
         <div class="envelope" id="envelope">
             <div class="envelope-flap"></div>
@@ -767,7 +732,7 @@
 
                 <form class="rsvp-form" id="rsvpForm">
                     <div id="guests-container">
-                        <!-- Первый гость (обязательный) -->
+                        <!-- Первый гость -->
                         <div class="guest-card" id="guest-1">
                             <div class="guest-title">
                                 <span>👤 Гость 1</span>
@@ -813,9 +778,28 @@
     </div>
 
     <script>
-        // ===== СКРИПТЫ =====
-        
-        // 1. АНИМАЦИЯ КОНВЕРТА И МУЗЫКА
+        // ТАЙМЕР
+        const weddingDate = new Date(2026, 6, 3, 16, 0);
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = weddingDate - now;
+            if (diff <= 0) {
+                document.getElementById('days').innerText = '00';
+                document.getElementById('hours').innerText = '00';
+                document.getElementById('minutes').innerText = '00';
+                document.getElementById('seconds').innerText = '00';
+                return;
+            }
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+        }
+        updateTimer();
+        setInterval(updateTimer, 1000);
+
+        // АНИМАЦИЯ КОНВЕРТА И МУЗЫКА
         const envelope = document.getElementById('envelope');
         const envelopeOverlay = document.getElementById('envelopeOverlay');
         const mainContent = document.getElementById('mainContent');
@@ -824,88 +808,36 @@
         const musicStatus = document.getElementById('musicStatus');
         let isPlaying = false;
 
-        // Обработчик клика по конверту
         envelope.addEventListener('click', function() {
-            // Анимация конверта
             envelope.classList.add('opening');
-            
-            // Ждём окончания анимации конверта
             setTimeout(() => {
                 envelopeOverlay.classList.add('hidden');
                 mainContent.classList.add('visible');
-                
-                // Запускаем музыку
-                audio.play()
-                    .then(() => {
-                        isPlaying = true;
-                        musicStatus.textContent = 'Сейчас играет';
-                        playBtn.classList.add('playing');
-                    })
-                    .catch(error => {
-                        console.log('Не удалось включить музыку:', error);
-                    });
-            }, 1000); // Время анимации конверта
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicStatus.textContent = 'Сейчас играет';
+                    playBtn.classList.add('playing');
+                }).catch(() => {});
+            }, 1000);
         });
 
-        // Кнопка плеера (пауза/плей)
         playBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
                 musicStatus.textContent = 'Музыка выключена';
                 playBtn.classList.remove('playing');
             } else {
-                audio.play()
-                    .then(() => {
-                        isPlaying = true;
-                        musicStatus.textContent = 'Сейчас играет';
-                        playBtn.classList.add('playing');
-                    })
-                    .catch(error => {
-                        console.log('Ошибка:', error);
-                        musicStatus.textContent = 'Ошибка';
-                    });
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicStatus.textContent = 'Сейчас играет';
+                    playBtn.classList.add('playing');
+                }).catch(() => {});
             }
         });
 
-        audio.addEventListener('ended', function() {
-            isPlaying = false;
-            playBtn.classList.remove('playing');
-            musicStatus.textContent = 'Музыка выключена';
-        });
-
-        // 2. ТАЙМЕР
-        const weddingDate = new Date(2026, 6, 3, 16, 0);
-
-        function updateTimer() {
-            const now = new Date();
-            const diff = weddingDate - now;
-
-            if (diff <= 0) {
-                document.getElementById('days').innerText = '00';
-                document.getElementById('hours').innerText = '00';
-                document.getElementById('minutes').innerText = '00';
-                document.getElementById('seconds').innerText = '00';
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('days').innerText = days < 10 ? '0' + days : days;
-            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
-            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
-        }
-        updateTimer();
-        setInterval(updateTimer, 1000);
-
-        // 3. АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ
-        const fadeElements = document.querySelectorAll('.fade-up');
+        // АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -913,19 +845,14 @@
                 }
             });
         }, { threshold: 0.2 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        fadeElements.forEach(el => observer.observe(el));
-
-        // 4. ДИНАМИЧЕСКОЕ ДОБАВЛЕНИЕ ГОСТЕЙ
+        // ДОБАВЛЕНИЕ ГОСТЕЙ
         let guestCount = 1;
-        const container = document.getElementById('guests-container');
-        const addBtn = document.getElementById('addGuestBtn');
-
-        addBtn.addEventListener('click', function() {
+        document.getElementById('addGuestBtn').addEventListener('click', function() {
             guestCount++;
             const newGuest = document.createElement('div');
             newGuest.className = 'guest-card';
-            newGuest.id = `guest-${guestCount}`;
             newGuest.innerHTML = `
                 <div class="guest-title">
                     <span>👤 Гость ${guestCount}</span>
@@ -955,25 +882,23 @@
                     </select>
                 </div>
             `;
-            container.appendChild(newGuest);
+            document.getElementById('guests-container').appendChild(newGuest);
         });
 
-        // 5. ОТПРАВКА В ГУГЛ-ТАБЛИЦУ
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzVJkHZ3WUuLGjZJ9zQ_xUJXa6nPxL05fS2D3hzGj3p8XuTtD0xFjNCqcgRzcruKol2Va4/exec';
+        // ОТПРАВКА В ГУГЛ-ТАБЛИЦУ - ИСПРАВЛЕНО!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxICUZfMUl5ESGSnZZobEtWEoAsS7oaeiqYUhz6pPs2bqmord7jyCU2CK91EyPKpKI0tw/exec';
 
-        document.getElementById('rsvpForm')?.addEventListener('submit', async function(e) {
+        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const statusEl = document.getElementById('formStatus');
             const submitBtn = document.getElementById('submitBtn');
             
-            // Собираем всех гостей
             const guestCards = document.querySelectorAll('.guest-card');
             const guests = [];
             let hasError = false;
 
             guestCards.forEach((card, index) => {
                 const name = card.querySelector('.guest-name').value.trim();
-                // Для первого гостя имя обязательно
                 if (index === 0 && !name) {
                     hasError = true;
                     return;
@@ -987,21 +912,12 @@
 
             if (hasError) {
                 statusEl.style.color = 'red';
-                statusEl.innerText = 'Пожалуйста, введите имя первого гостя';
+                statusEl.innerText = 'Введите имя первого гостя';
                 return;
             }
-
-            if (guests.length === 0) {
-                statusEl.style.color = 'red';
-                statusEl.innerText = 'Добавьте хотя бы одного гостя';
-                return;
-            }
-
-            const wishes = document.getElementById('wishes').value;
 
             submitBtn.disabled = true;
             submitBtn.innerText = 'Отправка...';
-            statusEl.style.color = '#3a7b5b';
             statusEl.innerText = 'Отправляем...';
 
             try {
@@ -1010,32 +926,23 @@
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({
-                        sheetName: 'Лист5',
-                        guests: guests.join('; '),
-                        wishes: wishes,
-                        timestamp: new Date().toLocaleString('ru-RU')
+                        guests: guests.join('; ')
                     })
                 });
 
-                statusEl.innerText = '✓ Спасибо! Ваш ответ записан.';
-                // Очищаем форму
-                document.querySelectorAll('.guest-card').forEach((card, index) => {
-                    if (index > 0) card.remove();
-                });
-                document.getElementById('guest-1').querySelector('.guest-name').value = '';
-                document.getElementById('wishes').value = '';
+                statusEl.innerText = '✓ Спасибо! Ответ записан.';
+                document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
+                document.querySelector('#guest-1 .guest-name').value = '';
                 guestCount = 1;
             } catch (error) {
-                console.error('Ошибка:', error);
                 statusEl.style.color = 'red';
-                statusEl.innerText = 'Ошибка при отправке. Попробуйте позже.';
+                statusEl.innerText = 'Ошибка. Попробуйте позже.';
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Отправить подтверждение';
-                setTimeout(() => { statusEl.innerText = ''; }, 5000);
+                setTimeout(() => statusEl.innerText = '', 5000);
             }
         });
     </script>
 </body>
-
 </html>
