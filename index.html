@@ -117,7 +117,7 @@
             left: 0;
             width: 100%;
             height: 45px;
-            background: #b36b3c;
+            background: #5a3e28;  /* Новый цвет */
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             border-radius: 15px 15px 0 0;
             box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
@@ -125,7 +125,7 @@
             border-bottom: 3px solid #e6b08e;
         }
 
-        /* Тело конверта - фотография */
+        /* Тело конверта - просто бежевое */
         .envelope-body {
             position: absolute;
             top: 0;
@@ -133,33 +133,24 @@
             width: 100%;
             height: 100%;
             border-radius: 0 0 15px 15px;
-            overflow: hidden;
+            background-color: #f5e6d3;
             box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
             z-index: 2;
         }
 
-        .envelope-body::before {
-            content: "";
+        /* Треугольник (клапан) */
+        .envelope-flap {
             position: absolute;
-            top: 0;
+            top: 0px;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.9;
-        }
-
-        .envelope-body::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            z-index: 1;
+            height: 45px;
+            background: #5a3e28;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            border-bottom: 3px solid #e6b08e;
         }
 
         .envelope-content {
@@ -948,7 +939,7 @@
                             <div class="guest-title">👤 Гость 1</div>
                             <div class="form-group">
                                 <label>ФИО *</label>
-                                <input type="text" class="guest-name" placeholder="Пример: Вадим Зиновьев" required>
+                                <input type="text" class="guest-name" placeholder="Вадим Зиновьев" required>
                             </div>
                             <div class="form-group">
                                 <label>🍽 Горячее</label>
@@ -1165,4 +1156,3 @@
             </footer>
 </body>
 </html>
-
