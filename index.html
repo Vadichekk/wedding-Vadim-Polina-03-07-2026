@@ -40,7 +40,7 @@
             margin-bottom: 80px;
         }
 
-        /* ===== АНИМАЦИЯ КОНВЕРТА (ИСПРАВЛЕНО) ===== */
+        /* ===== АНИМАЦИЯ КОНВЕРТА ===== */
         .envelope-overlay {
             position: fixed;
             top: 0;
@@ -53,33 +53,27 @@
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            transition: opacity 1.5s ease, backdrop-filter 1.5s ease;
+            transition: opacity 1.5s ease;
             pointer-events: none;
         }
 
         .envelope-overlay.hidden {
             opacity: 0;
-            backdrop-filter: blur(0);
             pointer-events: none;
         }
 
         .envelope {
             width: 300px;
             height: 200px;
-            background: linear-gradient(145deg, #f8e9d9, #ecd5bd);
-            border-radius: 0 0 15px 15px;
             position: relative;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             animation: float 3s ease-in-out infinite;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 1s ease;
             pointer-events: auto;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid rgba(255, 255, 255, 0.5);
         }
 
         .envelope.opening {
-            transform: translateY(100vh) rotate(5deg);
+            transform: translateY(100vh);
         }
 
         @keyframes float {
@@ -87,42 +81,80 @@
             50% { transform: translateY(-15px); }
         }
 
-        /* Клапан конверта - треугольник */
+        /* Треугольник (клапан) - ОПУЩЕН НИЖЕ */
         .envelope-flap {
             position: absolute;
-            top: -10px;
+            top: 0px;  /* Было 15px - поднял немного */
             left: 0;
             width: 100%;
-            height: 40px;
+            height: 45px;
             background: #b36b3c;
             clip-path: polygon(0 0, 100% 0, 50% 100%);
-            border-radius: 12px 12px 0 0;
-            z-index: 2;  /* треугольник снизу */
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            border-bottom: 3px solid #e6b08e;
         }
 
-        /* Внутренняя часть конверта */
+        /* Тело конверта - фотография */
         .envelope-body {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #f8e9d9;
             border-radius: 0 0 15px 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .envelope-body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.9;
+        }
+
+        .envelope-body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .envelope-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            padding-top: 40px;
-            z-index: 1;  /* тело конверта выше треугольника */
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 4;
+            padding: 20px;
+            text-align: center;
         }
 
         .envelope-heart {
             font-size: 3rem;
             margin-bottom: 10px;
-            color: #b36b3c;
-            position: relative;
-            z-index: 3;  /* выше треугольника */
+            animation: heartbeat 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
         }
 
         @keyframes heartbeat {
@@ -133,22 +165,19 @@
         .envelope-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: 2rem;
-            color: #5a3f32;
-            margin-bottom: 5px;
             font-weight: 600;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+            margin-bottom: 5px;
         }
 
         .envelope-subtitle {
             font-size: 1.3rem;
-            color: #876b55;
             font-family: 'Cormorant Garamond', serif;
-            margin-bottom: 15px;
+            color: #3d2314;  /* Новый цвет */
         }
 
         .envelope-hint {
             position: absolute;
-            bottom: -40px;
+            bottom: -35px;
             left: 0;
             width: 100%;
             text-align: center;
@@ -156,8 +185,7 @@
             font-size: 1rem;
             animation: bounce 2s infinite;
             font-weight: 500;
-            text-shadow: 0 1px 3px rgba(255,255,255,0.8);
-            z-index: 40;
+            z-index: 5;
         }
 
         @keyframes bounce {
@@ -661,7 +689,8 @@
     <div class="envelope-overlay" id="envelopeOverlay">
         <div class="envelope" id="envelope">
             <div class="envelope-flap"></div>
-            <div class="envelope-body">
+            <div class="envelope-body"></div>
+            <div class="envelope-content">
                 <div class="envelope-heart">❤️</div>
                 <div class="envelope-title">Приглашение</div>
                 <div class="envelope-subtitle">Вадим & Полина</div>
