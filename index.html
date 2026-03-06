@@ -40,7 +40,7 @@
             margin-bottom: 80px;
         }
 
-        /* ===== АНИМАЦИЯ КОНВЕРТА (ИСПРАВЛЕНО) ===== */
+        /* ===== АНИМАЦИЯ КОНВЕРТА (С ПРАВИЛЬНЫМ ТРЕУГОЛЬНИКОМ) ===== */
         .envelope-overlay {
             position: fixed;
             top: 0;
@@ -63,10 +63,10 @@
         }
 
         .envelope {
-            width: 280px;
-            height: 180px;
+            width: 300px;
+            height: 200px;
             background: linear-gradient(145deg, #f8e9d9, #ecd5bd);
-            border-radius: 15px 15px 15px 15px;
+            border-radius: 0 0 15px 15px; /* Только нижние углы скруглены */
             position: relative;
             box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
             cursor: pointer;
@@ -74,6 +74,7 @@
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            border-top: none; /* Убираем верхнюю границу, чтобы треугольник её перекрыл */
         }
 
         .envelope.opening {
@@ -85,7 +86,21 @@
             50% { transform: translateY(-15px); }
         }
 
-        /* Простой конверт без треугольника */
+        /* Клапан конверта - треугольник сверху */
+        .envelope-flap {
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(145deg, #f8e9d9, #ecd5bd);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-radius: 15px 15px 0 0; /* Скругляем верхние углы клапана */
+            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        /* Внутренняя часть конверта (для контраста) */
         .envelope-body {
             position: absolute;
             top: 0;
@@ -93,7 +108,7 @@
             width: 100%;
             height: 100%;
             background: inherit;
-            border-radius: 15px;
+            border-radius: 0 0 15px 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -101,6 +116,7 @@
             padding: 20px;
             text-align: center;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1;
         }
 
         .envelope-heart {
@@ -434,8 +450,8 @@
         .btn-secondary {
             background: #e1d3cb;
             color: #4a3a32;
-            margin-top: 20px; /* Увеличен отступ сверху */
-            margin-bottom: 10px; /* Добавлен отступ снизу */
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
 
         .btn-secondary:hover {
@@ -449,7 +465,7 @@
 
         .chat-link {
             display: inline-flex;
-            flex-direction: column; /* Изменено на колонку для двух строк */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 5px;
@@ -629,15 +645,16 @@
             .chat-link { padding: 12px 25px; }
             .contact-phone { font-size: 1.4rem; }
             .guest-card { padding: 20px; }
-            .envelope { width: 240px; height: 160px; }
+            .envelope { width: 260px; height: 170px; }
             .envelope-title { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- КОНВЕРТ (ИСПРАВЛЕН) -->
+    <!-- КОНВЕРТ С ТРЕУГОЛЬНИКОМ -->
     <div class="envelope-overlay" id="envelopeOverlay">
         <div class="envelope" id="envelope">
+            <div class="envelope-flap"></div>
             <div class="envelope-body">
                 <div class="envelope-heart">❤️</div>
                 <div class="envelope-title">Приглашение</div>
@@ -698,7 +715,6 @@
                     <div class="card">
                         <h3>🥂 Банкет</h3>
                         <p><strong>17:00</strong><br>Банкетный зал отеля «Талес»</p>
-                        <!-- Строка с welcome-зоной УДАЛЕНА -->
                     </div>
                 </div>
             </section>
@@ -795,7 +811,7 @@
                         </div>
                     </div>
 
-                    <!-- Кнопка добавления гостя (с отступами) -->
+                    <!-- Кнопка добавления гостя -->
                     <button type="button" class="btn btn-secondary" id="addGuestBtn">➕ Добавить еще гостя</button>
 
                     <button type="submit" class="btn" id="submitBtn">Отправить подтверждение</button>
