@@ -90,15 +90,15 @@
         /* Клапан конверта - теперь яркий и заметный */
         .envelope-flap {
             position: absolute;
-            top: -5px;  /* ЕЩЕ НИЖЕ (было -15, стало -5) */
+            top: -5px;  /* Опустили низко */
             left: 0;
             width: 100%;
-            height: 45px;  /* чуть меньше */
+            height: 45px;
             background: #b36b3c;
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             border-radius: 12px 12px 0 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 5;  /* уменьшили, чтобы сердце было выше */
+            z-index: 30;  /* Треугольник сверху */
             border-bottom: 2px solid #e6b08e;
         }
 
@@ -117,7 +117,7 @@
             padding: 20px;
             text-align: center;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-            z-index: 10;  /* увеличили, чтобы сердце было поверх */
+            z-index: 20;  /* Тело конверта под треугольником */
         }
         
         .envelope-heart {
@@ -126,10 +126,10 @@
             animation: heartbeat 1.5s ease-in-out infinite;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             color: #b36b3c;
-            position: relative;  /* добавить */
-            z-index: 15;         /* добавить - выше всего */
+            position: relative;
+            z-index: 40;  /* Сердце выше всех */
         }
-
+        
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.15); }
@@ -160,7 +160,7 @@
             color: #876b55;
             font-size: 1rem;
             font-weight: 500;
-            z-index: 20;  /* Самый высокий */
+            z-index: 50;  /* Подсказка самая высокая */
         }
 
         @keyframes bounce {
@@ -1029,6 +1029,7 @@
     </script>
 </body>
 </html>
+
 
 
 
