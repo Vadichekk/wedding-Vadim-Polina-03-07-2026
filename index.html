@@ -18,10 +18,38 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background: #fcf9f7;
             color: #2e2e2e;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('Фон.png');
+            background-repeat: repeat;
+            background-size: auto;
+            background-position: 0 0;
+            opacity: 0.3;  /* Прозрачность самого фона */
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.025);  /* Полупрозрачный белый слой */
+            z-index: -1;
+            pointer-events: none;
         }
 
         h1, h2, h3, .timer-item span:first-child {
@@ -60,6 +88,7 @@
         .envelope-overlay.hidden {
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;  /* добавить эту строку */
         }
 
         .envelope {
@@ -256,21 +285,21 @@
         }
 
         .timer-item {
-            padding: 6px 10px;
-            min-width: 55px;
+            padding: 8px 15px;
+            min-width: 75px;
             background: transparent;
         }
 
         .timer-item span:first-child {
             display: block;
-            font-size: 1.3rem;
+            font-size: 2rem;  /* Увеличено */
             line-height: 1.2;
             font-weight: 600;
             color: #2e2e2e;
         }
 
         .timer-item span:last-child {
-            font-size: 0.65rem;
+            font-size: 0.8rem;  /* Увеличено */
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #2e2e2e;
@@ -375,7 +404,7 @@
         /* Дресс-код точки */
         .color-dots {
             display: flex;
-            gap: 40px;
+            gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
             margin: 40px 0;
@@ -383,15 +412,29 @@
 
         .color-item {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;  /* Фиксированная ширина вместо min-width */
         }
 
         .dot {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             border: 3px solid white;
+        }
+
+        .color-item span {
+            display: block;
+            min-height: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            width: 100%;
+            word-break: keep-all;  /* Запрещает перенос слов */
         }
 
         /* Расписание */
@@ -641,6 +684,30 @@
 
         /* Адаптация для мобильных */
         @media (max-width: 600px) {
+            .color-dots {
+                gap: 10px;
+            }
+            
+            .color-item {
+                width: 100px;
+            }
+            
+            .dot {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .color-item span {
+                min-height: 40px;
+                font-size: 0.8rem;
+            }          
+            body {
+                background-size: 50% auto;  /* Уменьшаем в 2 раза для мобильных */
+                background-repeat: repeat;
+            }
+            body::before {
+                background-size: 50% auto;  /* Уменьшаем фон на мобильных */
+            }                        
             .container { 
                 padding: 20px 15px;
             }
@@ -663,16 +730,16 @@
             }
             
             .timer-item {
-                min-width: 45px;
-                padding: 4px 6px;
+                min-width: 60px;
+                padding: 6px 8px;
             }
             
             .timer-item span:first-child {
-                font-size: 1rem;
+                font-size: 1.5rem;  /* Увеличено */
             }
             
             .timer-item span:last-child {
-                font-size: 0.5rem;
+                font-size: 0.65rem;  /* Увеличено */
             }
             
             .container section:first-of-type {
@@ -824,12 +891,20 @@
                 <h2 class="section-title">Дресс-код</h2>
                 <p style="text-align: center;">Дорогие гости, мы с особым трепетом готовимся к этому дню!</p>
                 <p style="text-align: center;">Нам будет очень приятно, если ваши наряды будут соответствовать цветовой гамме нашей свадьбы! </p>
-                <p style="text-align: center;">Основные цвета: оттенки коричневого, бежевого</p>
+                <p>ㅤ</p>
+                <p style="text-align: center;">Основные цвета для девушек: оттенки коричневого, бежевого:</p>
                 <div class="color-dots">
-                    <div class="color-item"><div class="dot" style="background:#47634b;"></div><span>Лесной мох</span></div>
-                    <div class="color-item"><div class="dot" style="background:#a57c5c;"></div><span>Кора дерева</span></div>
-                    <div class="color-item"><div class="dot" style="background:#d9c5b3;"></div><span>Песчаный</span></div>
-                    <div class="color-item"><div class="dot" style="background:#7f5539;"></div><span>Терракота</span></div>
+                    <div class="color-item"><div class="dot" style="background:#24160e;"></div><span>Тёмный кофейный</span></div>
+                    <div class="color-item"><div class="dot" style="background:#5a3e28;"></div><span>Тёмно-коричневый</span></div>
+                    <div class="color-item"><div class="dot" style="background:#856d55;"></div><span>Коричнево-серый</span></div>
+                    <div class="color-item"><div class="dot" style="background:#b2a28e;"></div><span>Бежево-серый</span></div>
+                </div>
+                <p style="text-align: center; font-weight: bold; color: #ff0000;">Маленькая просьба к прекрасным гостьям: белое платье в этот вечер будет только у одной девушки. Будем благодарны, если вы выберете другие наряды.</p>
+                <p>ㅤ</p>
+                <p style="text-align: center;">Основные цвета для мужчин: черный низ, белый верх:</p>
+                <div class="color-dots">
+                    <div class="color-item"><div class="dot" style="background:#000000;"></div><span>Черный</span></div>
+                    <div class="color-item"><div class="dot" style="background:#ffffff;"></div><span>Белый</span></div>
                 </div>
             </section>
 
@@ -855,16 +930,17 @@
                 
                 <div class="contact-block">
                     <div class="contact-name">Екатерина</div>
+
                     <div class="contact-role">организатор</div>
-                    <p>По вопросам:</p>
-                    <a href="tel:+79630409212" class="contact-phone">8 (963) 040-92-12</a>
+                    <p>Дорогие гости! Если у вас возникли вопросы, пожелания, или вы подготовили творческие поздравления, свяжитесь с нашим организатором</p>
+                    <a href="tel:+79630409212" class="contact-phone">+7 (963) 040-92-12</a>
                 </div>
             </section>
 
             <!-- ФОРМА ПОДТВЕРЖДЕНИЯ -->
             <section class="fade-up">
                 <h2 class="section-title">Подтвердите присутствие</h2>
-                <p style="text-align: center; margin-bottom: 30px;">Пожалуйста, ответьте до 01.06.2026</p>
+                <p style="text-align: center; font-weight: bold; color: #ff0000;">Пожалуйста, ответьте до 01.06.2026</p>
 
                 <form class="rsvp-form" id="rsvpForm">
                     <div id="guests-container">
@@ -1076,5 +1152,16 @@
             }
         });
     </script>
+            <footer style="text-align: center; padding: 30px 0 20px; color: #856d55; border-top: 1px solid rgba(133, 109, 85, 0.2);">
+                <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; letter-spacing: 1px;">Вадим & Полина</p>
+                <p style="font-size: 0.9rem; margin-top: 5px;">посёлок Таватуй • Загородный отель «Талес»</p>
+                <p style="font-size: 0.8rem; margin-top: 15px; opacity: 0.7;">03.07.2026</p>
+                
+                <!-- Новая ссылка на Telegram -->
+                <p style="font-size: 0.7rem; margin-top: 25px; opacity: 0.5;">
+                    По техническим вопросам обращаться ко мне 
+                    <a href="https://t.me/MamkinGriz" target="_blank" style="color: #856d55; text-decoration: none; border-bottom: 1px dashed #856d55;">@MamkinGriz</a>
+                </p>
+            </footer>
 </body>
 </html>
