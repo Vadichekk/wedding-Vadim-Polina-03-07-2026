@@ -40,7 +40,7 @@
             margin-bottom: 80px;
         }
 
-        /* ===== АНИМАЦИЯ КОНВЕРТА (С ПРАВИЛЬНЫМ ТРЕУГОЛЬНИКОМ) ===== */
+        /* ===== АНИМАЦИЯ КОНВЕРТА ===== */
         .envelope-overlay {
             position: fixed;
             top: 0;
@@ -75,7 +75,7 @@
             pointer-events: auto;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-top: 2px solid rgba(255, 255, 255, 0.5);
-            overflow: hidden;  /* ← ДОБАВИТЬ эту строку */
+            overflow: hidden;
         }
 
         .envelope.opening {
@@ -90,18 +90,19 @@
         /* Клапан конверта - треугольник сверху */
         .envelope-flap {
             position: absolute;
-            top: -5px;  /* ← ИЗМЕНИТЬ: было -15, стало -5 (ещё ниже) */
+            top: -5px;
             left: 0;
             width: 100%;
-            height: 45px;  /* ← ИЗМЕНИТЬ: было 50, стало 45 */
+            height: 45px;
             background: linear-gradient(145deg, #f8e9d9, #ecd5bd);
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             border-radius: 15px 15px 0 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0, 0, 0, 0.1);
             z-index: 2;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Внутренняя часть конверта (для контраста) */
+        /* Внутренняя часть конверта */
         .envelope-body {
             position: absolute;
             top: 0;
@@ -117,13 +118,14 @@
             padding: 20px;
             text-align: center;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-            z-index: 3;  /* ← ДОБАВИТЬ эту строку (больше чем у треугольника) */
+            z-index: 3;
         }
 
         .envelope-heart {
             font-size: 2.8rem;
             margin-bottom: 12px;
             animation: heartbeat 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
         }
 
         @keyframes heartbeat {
@@ -137,12 +139,14 @@
             color: #5a3f32;
             margin-bottom: 5px;
             font-weight: 600;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
         }
 
         .envelope-subtitle {
             font-size: 1.2rem;
             color: #876b55;
             font-family: 'Cormorant Garamond', serif;
+            margin-bottom: 10px;
         }
 
         .envelope-hint {
@@ -155,6 +159,8 @@
             font-size: 0.9rem;
             animation: bounce 2s infinite;
             font-weight: 400;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            z-index: 4;
         }
 
         @keyframes bounce {
@@ -652,7 +658,7 @@
     </style>
 </head>
 <body>
-    <!-- КОНВЕРТ С ТРЕУГОЛЬНИКОМ -->
+    <!-- КОНВЕРТ -->
     <div class="envelope-overlay" id="envelopeOverlay">
         <div class="envelope" id="envelope">
             <div class="envelope-flap"></div>
@@ -1021,5 +1027,3 @@
     </script>
 </body>
 </html>
-
-
