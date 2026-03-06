@@ -40,7 +40,7 @@
             margin-bottom: 80px;
         }
 
-        /* ===== АНИМАЦИЯ КОНВЕРТА ===== */
+        /* ===== АНИМАЦИЯ КОНВЕРТА (ИСПРАВЛЕНО) ===== */
         .envelope-overlay {
             position: fixed;
             top: 0;
@@ -53,50 +53,39 @@
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            transition: opacity 1.5s ease, backdrop-filter 1.5s ease;
+            transition: opacity 1.5s ease;
             pointer-events: none;
         }
 
         .envelope-overlay.hidden {
             opacity: 0;
-            backdrop-filter: blur(0);
             pointer-events: none;
         }
 
         .envelope {
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(135deg, #f3e5d7, #e8d5c0);
-            border-radius: 20px;
+            width: 280px;
+            height: 180px;
+            background: linear-gradient(145deg, #f8e9d9, #ecd5bd);
+            border-radius: 15px 15px 15px 15px;
             position: relative;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
             cursor: pointer;
             animation: float 3s ease-in-out infinite;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .envelope.opening {
-            transform: translateY(100vh) rotate(5deg);
+            transform: translateY(100vh) rotate(3deg);
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
         }
 
-        .envelope-flap {
-            position: absolute;
-            top: -30px;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: inherit;
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
-        }
-
+        /* Простой конверт без треугольника */
         .envelope-body {
             position: absolute;
             top: 0;
@@ -104,47 +93,51 @@
             width: 100%;
             height: 100%;
             background: inherit;
-            border-radius: 20px;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
             text-align: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .envelope-heart {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.8rem;
+            margin-bottom: 12px;
             animation: heartbeat 1.5s ease-in-out infinite;
         }
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.15); }
         }
 
         .envelope-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.8rem;
             color: #5a3f32;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .envelope-subtitle {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: #876b55;
+            font-family: 'Cormorant Garamond', serif;
         }
 
         .envelope-hint {
             position: absolute;
-            bottom: -40px;
+            bottom: -35px;
             left: 0;
             width: 100%;
             text-align: center;
             color: #876b55;
             font-size: 0.9rem;
             animation: bounce 2s infinite;
+            font-weight: 400;
         }
 
         @keyframes bounce {
@@ -441,7 +434,8 @@
         .btn-secondary {
             background: #e1d3cb;
             color: #4a3a32;
-            margin-top: 0;
+            margin-top: 20px; /* Увеличен отступ сверху */
+            margin-bottom: 10px; /* Добавлен отступ снизу */
         }
 
         .btn-secondary:hover {
@@ -455,10 +449,12 @@
 
         .chat-link {
             display: inline-flex;
+            flex-direction: column; /* Изменено на колонку для двух строк */
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: 5px;
             background: #e1d3cb;
-            padding: 18px 40px;
+            padding: 15px 30px;
             border-radius: 60px;
             text-decoration: none;
             color: #3a2a21;
@@ -467,6 +463,7 @@
             margin: 25px 0 40px;
             transition: all 0.3s;
             border: 2px solid transparent;
+            line-height: 1.4;
         }
 
         .chat-link:hover {
@@ -474,6 +471,15 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             border-color: #b58b70;
+        }
+
+        .chat-link span:first-child {
+            font-size: 1.3rem;
+        }
+
+        .chat-link span:last-child {
+            font-size: 1rem;
+            opacity: 0.9;
         }
 
         .contact-block {
@@ -620,19 +626,18 @@
             .flowers-block { padding: 30px 20px; }
             .flowers-title { font-size: 2rem; }
             .flowers-text { font-size: 1.1rem; }
-            .chat-link { padding: 15px 25px; font-size: 1rem; }
+            .chat-link { padding: 12px 25px; }
             .contact-phone { font-size: 1.4rem; }
             .guest-card { padding: 20px; }
-            .envelope { width: 250px; height: 170px; }
+            .envelope { width: 240px; height: 160px; }
             .envelope-title { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- КОНВЕРТ -->
+    <!-- КОНВЕРТ (ИСПРАВЛЕН) -->
     <div class="envelope-overlay" id="envelopeOverlay">
         <div class="envelope" id="envelope">
-            <div class="envelope-flap"></div>
             <div class="envelope-body">
                 <div class="envelope-heart">❤️</div>
                 <div class="envelope-title">Приглашение</div>
@@ -693,7 +698,7 @@
                     <div class="card">
                         <h3>🥂 Банкет</h3>
                         <p><strong>17:00</strong><br>Банкетный зал отеля «Талес»</p>
-                        <p>Сбор гостей в <strong>15:30</strong> (welcome-зона)</p>
+                        <!-- Строка с welcome-зоной УДАЛЕНА -->
                     </div>
                 </div>
             </section>
@@ -737,7 +742,8 @@
                 <h2 class="section-title">Чат и контакты</h2>
                 <p style="font-size: 1.2rem;">Присоединяйтесь к нашему Telegram-чату, чтобы быть на связи:</p>
                 <a href="https://t.me/+97GMs6tI2bpjOTUy" class="chat-link" target="_blank">
-                    📱 Вадим & Полина / Telegram-чат
+                    <span>📱 Вадим & Полина</span>
+                    <span>Telegram-чат</span>
                 </a>
                 
                 <div class="contact-block">
@@ -789,7 +795,7 @@
                         </div>
                     </div>
 
-                    <!-- Кнопка добавления гостя -->
+                    <!-- Кнопка добавления гостя (с отступами) -->
                     <button type="button" class="btn btn-secondary" id="addGuestBtn">➕ Добавить еще гостя</button>
 
                     <button type="submit" class="btn" id="submitBtn">Отправить подтверждение</button>
@@ -916,7 +922,7 @@
             document.getElementById('guests-container').appendChild(newGuest);
         });
 
-        // ОТПРАВКА В TELEGRAM - РАБОТАЕТ!
+        // ОТПРАВКА В TELEGRAM
         document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const statusEl = document.getElementById('formStatus');
@@ -957,7 +963,7 @@
             statusEl.innerText = 'Отправляем...';
 
             try {
-                // ВАШИ ДАННЫЕ ДЛЯ TELEGRAM
+                // ДАННЫЕ ДЛЯ TELEGRAM
                 const TELEGRAM_TOKEN = '8790312676:AAE9PAAjoN6qJjurAoeKoxiDVur0yAbpodk';
                 const CHAT_ID = '705955486';
                 
