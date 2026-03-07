@@ -978,7 +978,7 @@
                                 <label>Подтвердите свое присутствие *</label>
                                 <div class="radio-group">
                                     <label>
-                                        <input type="radio" name="attendance-1" class="guest-attendance" value="Обязательно буду" checked>
+                                        <input type="radio" name="attendance-1" class="guest-attendance" value="Обязательно буду">
                                         <span>Обязательно буду</span>
                                     </label>
                                     <label>
@@ -990,10 +990,10 @@
                             
                             <!-- Горячее -->
                             <div class="form-group">
-                                <label>🍽 Горячее *</label>
+                                <label>🍽 Горячее</label>
                                 <div class="radio-group">
                                     <label>
-                                        <input type="radio" name="meal-1" class="guest-meal" value="🍗 Курица" checked>
+                                        <input type="radio" name="meal-1" class="guest-meal" value="🍗 Курица">
                                         <span>🍗 Курица</span>
                                     </label>
                                     <label>
@@ -1005,7 +1005,7 @@
                             
                             <!-- Алкоголь -->
                             <div class="form-group">
-                                <label>🥂 Алкоголь *</label>
+                                <label>🥂 Алкоголь</label>
                                 <div class="checkbox-group">
                                     <label>
                                         <input type="checkbox" class="guest-alcohol" value="🍷 Красное вино">
@@ -1171,7 +1171,7 @@
                     return;
                 }
                 if (name) {
-                    // Получаем подтверждение присутствия
+                    // Получаем подтверждение присутствия (обязательно)
                     const attendanceRadios = card.querySelectorAll('.guest-attendance');
                     let attendance = '';
                     for (let radio of attendanceRadios) {
@@ -1181,7 +1181,26 @@
                         }
                     }
                     
-                    // Получаем выбранные напитки (чекбоксы)
+                    // Проверяем только присутствие (обязательно)
+                    if (!attendance) {
+                        hasError = true;
+                        statusEl.style.color = 'red';
+                        statusEl.innerText = 'Пожалуйста, подтвердите присутствие';
+                        return;
+                    }
+                    
+                    // Получаем выбор горячего (необязательно)
+                    const mealRadios = card.querySelectorAll('.guest-meal');
+                    let meal = '';
+                    for (let radio of mealRadios) {
+                        if (radio.checked) {
+                            meal = radio.value;
+                            break;
+                        }
+                    }
+                    const mealText = meal ? meal : 'Не выбрано';
+                    
+                    // Получаем выбранные напитки (необязательно)
                     const alcoholCheckboxes = card.querySelectorAll('.guest-alcohol');
                     const selectedAlcohol = [];
                     for (let cb of alcoholCheckboxes) {
@@ -1189,11 +1208,9 @@
                             selectedAlcohol.push(cb.value);
                         }
                     }
-                    const alcoholText = selectedAlcohol.length > 0 ? selectedAlcohol.join(', ') : 'Не выбран';
+                    const alcoholText = selectedAlcohol.length > 0 ? selectedAlcohol.join(', ') : 'Не выбрано';
                     
-                    const meal = card.querySelector('.guest-meal').value;
-                    
-                    guests.push(`${name} (${attendance}) - ${meal}, Напитки: ${alcoholText}`);
+                    guests.push(`${name} (${attendance}) - Горячее: ${mealText}, Напитки: ${alcoholText}`);
                 }
             });
 
