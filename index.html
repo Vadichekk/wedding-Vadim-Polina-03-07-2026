@@ -1043,11 +1043,11 @@
                                 <label>После мероприятия (23:00) вы планируете:</label>
                                 <div class="radio-group">
                                     <label>
-                                        <input type="radio" name="meal-1" class="guest-meal" value="Планирую остаться">
+                                        <input type="radio" name="stay-1" class="guest-stay" value="Планирую остаться">
                                         <span>Планирую остаться</span>
                                     </label>
                                     <label>
-                                        <input type="radio" name="meal-1" class="guest-meal" value="Планирую уехать домой">
+                                        <input type="radio" name="stay-1" class="guest-stay" value="Поедим домой">
                                         <span>Поедим домой</span>
                                     </label>
                                 </div>
@@ -1215,6 +1215,20 @@
                         </label>
                     </div>
                 </div>
+                <!-- Размещение -->
+                <div class="form-group">
+                    <label>После мероприятия (23:00) вы планируете:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="stay-${guestCount}" class="guest-stay" value="Планирую остаться">
+                            <span>Планирую остаться</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stay-${guestCount}" class="guest-stay" value="Поедим домой">
+                            <span>Поедим домой</span>
+                        </label>
+                    </div>
+                </div>
             `;
             document.getElementById('guests-container').appendChild(div);
         });
@@ -1274,7 +1288,18 @@
                     }
                     const alcoholText = selectedAlcohol.length > 0 ? selectedAlcohol.join(', ') : 'Не выбрано';
                     
-                    guests.push(`${name} (${attendance}) - Горячее: ${mealText}, Напитки: ${alcoholText}`);
+                    // НОВОЕ: Получаем выбор размещения
+                    const stayRadios = card.querySelectorAll('.guest-stay');
+                    let stay = '';
+                    for (let radio of stayRadios) {
+                        if (radio.checked) {
+                            stay = radio.value;
+                            break;
+                        }
+                    }
+                    const stayText = stay ? stay : 'Не указано';
+                    
+                    guests.push(`${name} (${attendance}) - Горячее: ${mealText}, Напитки: ${alcoholText}, Размещение: ${stayText}`);
                 }
             });
 
@@ -1335,4 +1360,3 @@
             </footer>
 </body>
 </html>
-
