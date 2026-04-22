@@ -1075,22 +1075,14 @@
             try {
                 // ⚠️ ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ (ПОЛУЧЕННУЮ ИЗ APPS SCRIPT) ⚠️
                 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWLoKw97H1yDi_6THfneHhf8uL_bl5dI10ECacjFJR8nzUc7DIcNOTpWAq8rrPhrK6/exec';
-                // Без Content-Type: application/json — браузер не шлёт CORS preflight (OPTIONS).
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                // С GitHub Pages ответ Apps Script часто без CORS — обычный fetch падает.
+                // mode: 'no-cors' — запрос уходит, JS не читает ответ (opaque), ошибки CORS нет.
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-store',
                     body: JSON.stringify({ guests: guestsData })
                 });
-
-                const text = await response.text();
-                let result;
-                try {
-                    result = JSON.parse(text);
-                } catch (parseErr) {
-                    throw new Error('Некорректный ответ сервера');
-                }
-                if (!response.ok || result.result !== 'success') {
-                    throw new Error(result.error || ('Ошибка сервера: ' + response.status));
-                }
 
                 statusEl.innerText = '✓ Спасибо! Ответ записан.';
                 document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
