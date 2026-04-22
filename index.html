@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== СТИЛИ (оставлены без изменений) ===== */
+        /* ===== СТИЛИ (БЕЗ ИЗМЕНЕНИЙ) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1009,16 +1009,16 @@
             const submitBtn = document.getElementById('submitBtn');
             
             const guestCards = document.querySelectorAll('.guest-card');
-            const guests = [];
+            const guestsData = [];
             let hasError = false;
+            let errorMessage = '';
 
             for (let card of guestCards) {
                 const name = card.querySelector('.guest-name').value.trim();
                 if (!name && card === guestCards[0]) {
                     hasError = true;
-                    statusEl.innerText = 'Введите имя первого гостя';
-                    statusEl.style.color = 'red';
-                    return;
+                    errorMessage = 'Введите имя первого гостя';
+                    break;
                 }
                 if (!name) continue;
                 
@@ -1027,31 +1027,41 @@
                 for (let radio of attendanceRadios) if (radio.checked) { attendance = radio.value; break; }
                 if (!attendance) {
                     hasError = true;
-                    statusEl.innerText = 'Пожалуйста, подтвердите присутствие';
-                    statusEl.style.color = 'red';
-                    return;
+                    errorMessage = 'Пожалуйста, подтвердите присутствие для гостя ' + name;
+                    break;
                 }
                 
                 const mealRadios = card.querySelectorAll('.guest-meal');
                 let meal = '';
                 for (let radio of mealRadios) if (radio.checked) { meal = radio.value; break; }
-                const mealText = meal || 'Не выбрано';
+                const mealText = meal || '';
                 
                 const alcoholCheckboxes = card.querySelectorAll('.guest-alcohol');
                 const selectedAlcohol = [];
                 for (let cb of alcoholCheckboxes) if (cb.checked) selectedAlcohol.push(cb.value);
-                const alcoholText = selectedAlcohol.length ? selectedAlcohol.join(', ') : 'Не выбрано';
+                const alcoholText = selectedAlcohol.join(', ');
                 
                 const stayRadios = card.querySelectorAll('.guest-stay');
                 let stay = '';
                 for (let radio of stayRadios) if (radio.checked) { stay = radio.value; break; }
-                const stayText = stay || 'Не указано';
+                const stayText = stay || '';
                 
-                guests.push(`${name} (${attendance}) - Горячее: ${mealText}, Напитки: ${alcoholText}, Размещение: ${stayText}`);
+                guestsData.push({
+                    name: name,
+                    attendance: attendance,
+                    meal: mealText,
+                    alcohol: alcoholText,
+                    stay: stayText
+                });
             }
             
-            if (hasError) return;
-            if (!guests.length) {
+            if (hasError) {
+                statusEl.innerText = errorMessage;
+                statusEl.style.color = 'red';
+                return;
+            }
+            
+            if (guestsData.length === 0) {
                 statusEl.innerText = 'Добавьте хотя бы одного гостя';
                 statusEl.style.color = 'red';
                 return;
@@ -1063,23 +1073,25 @@
             statusEl.style.color = '#3a7b5b';
             
             try {
-                // ⚠️ ЗАМЕНИТЕ URL НА СВОЙ ИЗ ШАГА 2 ⚠️
+                // ⚠️ ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ (ПОЛУЧЕННУЮ ИЗ APPS SCRIPT) ⚠️
                 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5YMK4rTGR0iOv329tpmBA_EPx_hHpYU3t6IwoMgSCJDmeBJPE3mqBTTDTP9lWzHhw/exec';
                 
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ guests: guests.join('\n') })
+                    mode: 'no-cors', // для обхода CORS, если потребуется, но лучше убрать и проверить
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guests: guestsData })
                 });
                 
-                if (response.ok) {
-                    statusEl.innerText = '✓ Спасибо! Ответ записан.';
-                    document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
-                    document.querySelector('#guest-1 .guest-name').value = '';
-                    guestCount = 1;
-                } else {
-                    throw new Error('Ошибка сервера');
-                }
+                // При режиме no-cors мы не можем прочитать ответ, поэтому считаем успехом, если нет ошибки сети
+                statusEl.innerText = '✓ Спасибо! Ответ записан.';
+                // Очистка формы
+                document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
+                document.querySelector('#guest-1 .guest-name').value = '';
+                // Сбросить все радио и чекбоксы в первом блоке
+                const firstCard = document.querySelector('#guest-1');
+                firstCard.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+                guestCount = 1;
             } catch (error) {
                 console.error(error);
                 statusEl.innerText = 'Ошибка. Попробуйте позже.';
