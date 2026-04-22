@@ -1075,18 +1075,26 @@
             try {
                 // ⚠️ ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ (ПОЛУЧЕННУЮ ИЗ APPS SCRIPT) ⚠️
                 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWLoKw97H1yDi_6THfneHhf8uL_bl5dI10ECacjFJR8nzUc7DIcNOTpWAq8rrPhrK6/exec';
+                // Без Content-Type: application/json — браузер не шлёт CORS preflight (OPTIONS).
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ guests: guestsData })
                 });
-                
-                // При режиме no-cors мы не можем прочитать ответ, поэтому считаем успехом, если нет ошибки сети
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (parseErr) {
+                    throw new Error('Некорректный ответ сервера');
+                }
+                if (!response.ok || result.result !== 'success') {
+                    throw new Error(result.error || ('Ошибка сервера: ' + response.status));
+                }
+
                 statusEl.innerText = '✓ Спасибо! Ответ записан.';
-                // Очистка формы
                 document.querySelectorAll('.guest-card:not(#guest-1)').forEach(card => card.remove());
                 document.querySelector('#guest-1 .guest-name').value = '';
-                // Сбросить все радио и чекбоксы в первом блоке
                 const firstCard = document.querySelector('#guest-1');
                 firstCard.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
                 guestCount = 1;
